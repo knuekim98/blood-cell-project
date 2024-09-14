@@ -12,8 +12,12 @@ y = []
 for f in os.listdir("./dataset/dataset-master/JPEGImages/"):
     img = Image.open("./dataset/dataset-master/JPEGImages/"+f)
     img = np.array(img)
+    img = np.moveaxis(img, -1, 0)
 
-    assert img.shape == (480, 640, 3)
+    # normalize
+    img = (img.astype(np.float32)/255)*2-1
+
+    assert img.shape == (3, 480, 640)
     
     # one-hot encoding
     img_number = int(f[11:16])
@@ -39,3 +43,5 @@ print(len(X), len(y))
 with h5py.File('./main/cl/dataset.h5', 'w') as file:
     file.create_dataset("x", data=X)
     file.create_dataset("y", data=y)
+
+print("done")
