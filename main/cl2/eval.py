@@ -16,23 +16,24 @@ def accuracy(y_pred, y):
     return correct.mean().item()
 
 
-model = CNNmodel()
-model.load_state_dict(torch.load('./main/cl2/model.pth'))
-model.eval()
+def evaluation(model=None, filename=None):
+    if not isinstance(filename, None):
+        model = CNNmodel()
+        model.load_state_dict(torch.load(f'./main/cl2/{filename}'))
+        model.eval()
 
-test_dataloader = DataLoader(CustomDataset('TEST'), batch_size=1000, shuffle=True)
-cnt = 0
+    test_dataloader = DataLoader(CustomDataset('TEST'), batch_size=1000, shuffle=True)
 
-for i, (X, y) in enumerate(test_dataloader):
-    y_pred = model(X)
-    y_pred_prob = F.softmax(y_pred, dim=1)
-    y_pred_label = y_pred_prob.argmax(1)
+    for i, (X, y) in enumerate(test_dataloader):
+        y_pred = model(X)
+        y_pred_prob = F.softmax(y_pred, dim=1)
+        y_pred_label = y_pred_prob.argmax(1)
 
-    acc = accuracy(y_pred_prob, y)
-    print(acc)
+        acc = accuracy(y_pred_prob, y)
+        print(acc)
 
-    cm = confusion_matrix(y.argmax(1), y_pred_label)
-    ConfusionMatrixDisplay(cm).plot()
-    plt.show()
+        cm = confusion_matrix(y.argmax(1), y_pred_label)
+        ConfusionMatrixDisplay(cm).plot()
+        plt.show()
 
-    break
+        break
