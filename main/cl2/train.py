@@ -9,11 +9,13 @@ from eval import accuracy
 
 def train(dataloader, model, epoch, optimizer, criterion, device):
     
-    loss_values = []
-    acc_values = []
     model.train()
 
     for epoch in range(epoch):
+
+        loss_mean = 0.0
+        acc_mean = 0.0
+
         for i, (X, y) in tqdm(enumerate(dataloader)):
 
             X = X.to(device)
@@ -28,14 +30,15 @@ def train(dataloader, model, epoch, optimizer, criterion, device):
 
             acc = accuracy(F.softmax(y_pred, dim=1), y)
 
+            loss_mean += loss.item()
+            acc_mean += acc
 
-        loss_values.append(loss.detach().clone().numpy().item())
-        acc_values.append(acc)
+        loss_mean /= len(dataloader)
+        acc_mean /= len(dataloader)
+        print(f"epoch {epoch+1}: Loss {loss_mean:.6f}, Acc {acc_mean:.6f}")
 
-        print(f"epoch {epoch+1}: Loss {loss_values[-1]:.6f}, Acc {acc:.6f}")
 
-
-    model_name = f'./main/cl2/model-{int(time())}.pth'
+    model_name = f'./main/cl2/model/model-{int(time())}.pth'
     torch.save(model.state_dict(), model_name)
     print(f"Saved as {model_name}")
 

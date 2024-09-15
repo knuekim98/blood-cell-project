@@ -17,9 +17,9 @@ summary(model, input_size=(3, 240, 320), batch_size=1)
 
 
 # hyperparameter
-batch_size = 64
+batch_size = 16
 epoch = 10
-lr = 1e-4
+lr = 0.00005
 optimizer = optim.Adam(model.parameters(), lr=lr)
 #schedular = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda epoch: 0.95**epoch)
 criterion = nn.CrossEntropyLoss()

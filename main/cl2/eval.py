@@ -17,9 +17,9 @@ def accuracy(y_pred, y):
 
 
 def evaluation(model=None, filename=None):
-    if not isinstance(filename, None):
+    if filename is not None:
         model = CNNmodel()
-        model.load_state_dict(torch.load(f'./main/cl2/{filename}'))
+        model.load_state_dict(torch.load(f'./main/cl2/model/{filename}'))
         model.eval()
 
     test_dataloader = DataLoader(CustomDataset('TEST'), batch_size=1000, shuffle=True)
