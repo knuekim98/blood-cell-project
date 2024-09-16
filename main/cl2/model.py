@@ -7,20 +7,36 @@ class CNNmodel(nn.Module):
     def __init__(self):
         super(CNNmodel, self).__init__()
 
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=(5, 5), stride=1)
-        self.conv2 = nn.Conv2d(16, 16, kernel_size=(5, 5), stride=1)
-        self.conv3 = nn.Conv2d(16, 16, kernel_size=(5, 5), stride=1)
+        self.conv = nn.Sequential(
 
-        self.conv4 = nn.Conv2d(16, 64, kernel_size=(5, 5), stride=2)
-        self.conv5 = nn.Conv2d(64, 64, kernel_size=(5, 5), stride=2)
-        self.conv6 = nn.Conv2d(64, 64, kernel_size=(5, 5), stride=2)
-        
-        self.pool = nn.MaxPool2d(kernel_size=(2, 2), stride=2)
+            nn.Conv2d(3, 16, kernel_size=5, stride=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2),
+            nn.Dropout(0.25),
 
-        self.fc1 = nn.Linear(384, 64)
-        self.fc2 = nn.Linear(64, 4)
+            nn.Conv2d(16, 16, kernel_size=5, stride=1),
+            nn.ReLU(),
+            nn.Conv2d(16, 16, kernel_size=5, stride=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2),
+            nn.Dropout(0.25),
 
-        self.relu = nn.ReLU()
+            nn.Conv2d(16, 64, kernel_size=5, stride=2),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, kernel_size=5, stride=2),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, kernel_size=5, stride=2),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2),
+            nn.Dropout(0.5),
+
+        )
+
+        self.fc = nn.Sequential(
+            nn.Linear(384, 64),
+            nn.ReLU(),
+            nn.Linear(64, 4),
+        )
 
         self._init_weight()
 
@@ -39,19 +55,8 @@ class CNNmodel(nn.Module):
     
     def forward(self, x):
 
-        x = self.relu(self.conv1(x))
-        x = self.pool(x)
-
-        x = self.relu(self.conv2(x))
-        x = self.relu(self.conv3(x))
-        x = self.pool(x)
-
-        x = self.relu(self.conv4(x))
-        x = self.relu(self.conv5(x))
-        x = self.relu(self.conv6(x))
-        x = self.pool(x)
-
+        x = self.conv(x)
         x = x.view(x.shape[0], -1)
-        x = self.fc2(self.relu(self.fc1(x)))
+        x = self.fc(x)
 
         return x

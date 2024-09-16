@@ -1,10 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader
 from torchsummary import summary
 
-from read_dataset import CustomDataset
+from preprocess_v2 import create_datasets
 from model import CNNmodel
 from train import train
 from eval import evaluation
@@ -18,19 +17,23 @@ summary(model, input_size=(3, 240, 320), batch_size=1)
 
 # hyperparameter
 batch_size = 16
-epoch = 10
-lr = 0.00005
+epoch = 15
+lr = 0.0005 #0.00005
 optimizer = optim.Adam(model.parameters(), lr=lr)
 #schedular = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda epoch: 0.95**epoch)
 criterion = nn.CrossEntropyLoss()
 
 
-# train
-train_dataloader = DataLoader(CustomDataset("TRAIN"), batch_size=batch_size, shuffle=True)
-print("Loading Data Complete")
+# load data
+print("Load Datasets")
+train_loader, test_loader = create_datasets(batch_size, 100)
 
-model_trained = train(train_dataloader, model, epoch, optimizer, criterion, device)
+
+# train
+print("Train Model")
+model_name = train(train_loader, model, epoch, optimizer, criterion, device)
 
 
 # eval
-evaluation(model=model_trained)
+print("Inference")
+evaluation(test_loader, model, model_name)

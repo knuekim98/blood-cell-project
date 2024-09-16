@@ -19,7 +19,7 @@ def train(dataloader, model, epoch, optimizer, criterion, device):
         for i, (X, y) in tqdm(enumerate(dataloader)):
 
             X = X.to(device)
-            y = y.to(device)
+            y = F.one_hot(y, num_classes=4).float().to(device)
             optimizer.zero_grad()
 
             y_pred = model(X)
@@ -42,4 +42,4 @@ def train(dataloader, model, epoch, optimizer, criterion, device):
     torch.save(model.state_dict(), model_name)
     print(f"Saved as {model_name}")
 
-    return model
+    return model_name
