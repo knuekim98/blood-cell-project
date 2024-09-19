@@ -9,33 +9,34 @@ class CNNmodel(nn.Module):
 
         self.conv = nn.Sequential(
 
-            nn.Conv2d(3, 16, kernel_size=5, stride=1),
+            nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(2, stride=2),
-            nn.Dropout(0.25),
+            nn.MaxPool2d(2, stride=2), # -> 112 
 
-            nn.Conv2d(16, 16, kernel_size=5, stride=1),
+            nn.Conv2d(16, 16, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(16, 16, kernel_size=5, stride=1),
+            nn.MaxPool2d(2, stride=2), # -> 56
+            
+            nn.Conv2d(16, 64, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(2, stride=2),
-            nn.Dropout(0.25),
+            nn.MaxPool2d(2, stride=2), # -> 28     
 
-            nn.Conv2d(16, 64, kernel_size=5, stride=2),
+            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=5, stride=2),
-            nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=5, stride=2),
-            nn.ReLU(),
-            nn.MaxPool2d(2, stride=2),
-            nn.Dropout(0.5),
+            nn.MaxPool2d(2, stride=2), # -> 14
 
+            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2), # -> 7
+            
         )
 
         self.fc = nn.Sequential(
-            nn.Linear(384, 64),
+            nn.Linear(64*7*7, 512),
             nn.ReLU(),
-            nn.Linear(64, 4),
+            nn.Linear(512, 32),
+            nn.ReLU(),
+            nn.Linear(32, 4),
         )
 
         self._init_weight()
@@ -45,12 +46,16 @@ class CNNmodel(nn.Module):
         for m in self.modules():
 
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_uniform_(m.weight.data)
-                nn.init.constant_(m.bias.data, 0)
+                nn.init.kaiming_uniform_(m.weight)
+                nn.init.constant_(m.bias, 0)
 
             elif isinstance(m, nn.Linear):
-                nn.init.kaiming_uniform_(m.weight.data)
-                nn.init.constant_(m.bias.data, 0.01)
+                nn.init.kaiming_uniform_(m.weight)
+                nn.init.constant_(m.bias, 0.01)
+
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
 
     
     def forward(self, x):

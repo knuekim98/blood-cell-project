@@ -5,7 +5,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from tqdm import tqdm
 
 from model import CNNmodel
-from preprocess_v2 import create_datasets
+from preprocess_v2 import load_data
 
 
 def accuracy(y_pred, y):
@@ -42,5 +42,5 @@ def evaluation(dataloader, model, filename):
 
 
 if __name__ == '__main__':
-    _, test_loader = create_datasets(16, 100)
+    _, _, test_loader = load_data(16, 100)
     evaluation(test_loader, CNNmodel(), "./main/cl2/model/model-1726472613.pth")
