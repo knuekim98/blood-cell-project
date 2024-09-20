@@ -15,21 +15,24 @@ def accuracy(y_pred, y):
     return correct.mean().item()
 
 
-def evaluation(dataloader, model, filename):
-    model.load_state_dict(torch.load(filename, weights_only=True))
+def evaluation(dataloader, model, filename, device):
+    model.load_state_dict(torch.load(filename, weights_only=True, map_location=device))
     model.eval()
 
     total_y_label = []
     total_y_pred_label = []
     mean_acc = 0.
 
-    for i, (X, y) in tqdm(enumerate(dataloader)):
+    for _, (X, y) in tqdm(enumerate(dataloader)):
+        X = X.to(device)
+        y = y.to(device)
+
         y_pred = model(X)
         y_pred_prob = F.softmax(y_pred, dim=1)
         y_pred_label = y_pred_prob.argmax(1)
 
-        total_y_label.append(y)
-        total_y_pred_label.append(y_pred_label)
+        total_y_label.append(y.cpu())
+        total_y_pred_label.append(y_pred_label.cpu())
 
         acc = accuracy(y_pred_prob, F.one_hot(y, num_classes=4).float())
         mean_acc += acc
@@ -43,4 +46,5 @@ def evaluation(dataloader, model, filename):
 
 if __name__ == '__main__':
     _, _, test_loader = load_data(16, 100)
-    evaluation(test_loader, CNNmodel(), "./main/cl2/model/model-1726472613.pth")
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    evaluation(test_loader, CNNmodel().to(device), "./main/cl2/model/model-1726838700.pth", device)

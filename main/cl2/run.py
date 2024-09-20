@@ -17,10 +17,10 @@ summary(model, input_size=(3, 224, 224), batch_size=1)
 
 # hyperparameter
 batch_size = 16
-epochs = 30
+epochs = 50
 lr = 0.0001
 optimizer = optim.Adam(model.parameters(), lr=lr)
-schedular = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda x: 0.95**x)
+schedular = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda x: 1**x)
 criterion = nn.CrossEntropyLoss()
 
 
@@ -36,4 +36,4 @@ model_name = train(train_loader, val_loader, model, epochs, optimizer, schedular
 
 # eval
 print("Inference")
-evaluation(test_loader, model, model_name)
+evaluation(test_loader, model, model_name, device)

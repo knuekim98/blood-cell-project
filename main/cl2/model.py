@@ -10,32 +10,43 @@ class CNNmodel(nn.Module):
         self.conv = nn.Sequential(
 
             nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(16),
             nn.ReLU(),
             nn.MaxPool2d(2, stride=2), # -> 112 
 
             nn.Conv2d(16, 16, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(16),
             nn.ReLU(),
             nn.MaxPool2d(2, stride=2), # -> 56
             
-            nn.Conv2d(16, 64, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(32),
             nn.ReLU(),
-            nn.MaxPool2d(2, stride=2), # -> 28     
+            nn.MaxPool2d(2, stride=2), # -> 28  
+            nn.Dropout(0.2),
 
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(2, stride=2), # -> 14
+            nn.Dropout(0.2),
 
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(2, stride=2), # -> 7
+            nn.Dropout(0.5),
             
         )
 
         self.fc = nn.Sequential(
-            nn.Linear(64*7*7, 512),
+
+            nn.Linear(32*7*7, 256),
             nn.ReLU(),
-            nn.Linear(512, 32),
+
+            nn.Linear(256, 32),
             nn.ReLU(),
+
             nn.Linear(32, 4),
         )
 
