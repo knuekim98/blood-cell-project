@@ -20,7 +20,7 @@ batch_size = 16
 epochs = 50
 lr = 0.0001
 optimizer = optim.Adam(model.parameters(), lr=lr)
-schedular = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda x: 1**x)
+schedular = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda x: 0.95**x)
 criterion = nn.CrossEntropyLoss()
 
 

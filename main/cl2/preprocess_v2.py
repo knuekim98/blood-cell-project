@@ -8,9 +8,9 @@ from torch.utils.data import DataLoader, random_split
 def load_data(train_batch_size, test_batch_size):
 
     transform = transforms.Compose([
-        transforms.Resize((224, 224)),
         transforms.ToTensor(),
         transforms.Normalize(mean=(0.678, 0.641, 0.660), std=(0.260, 0.259, 0.257)),
+        transforms.Resize((224, 224)),
     ])
 
     train_data = ImageFolder("./dataset/dataset2-master/images/TRAIN", transform=transform)
